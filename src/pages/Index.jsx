@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Search, PlusCircle } from "lucide-react";
+import { Search, PlusCircle, Save } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 const initialItems = [
   {
@@ -47,6 +48,10 @@ const Index = () => {
     setItems(items.map(item => item.id === id ? { ...item, [field]: value } : item));
   };
 
+  const saveNote = (id) => {
+    setItems(items.map(item => item.id === id ? { ...item, isNew: false } : item));
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="relative mb-4">
@@ -82,7 +87,12 @@ const Index = () => {
                   placeholder="Content"
                   value={item.content}
                   onChange={(e) => handleInputChange(item.id, "content", e.target.value)}
+                  className="mb-2"
                 />
+                <Button onClick={() => saveNote(item.id)} className="mt-2">
+                  <Save className="mr-2 h-4 w-4" />
+                  Save
+                </Button>
               </>
             ) : (
               <>
