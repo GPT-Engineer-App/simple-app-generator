@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Search, PlusCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
-const items = [
+const initialItems = [
   {
     id: 1,
     image: "path/to/image1.jpg",
@@ -25,10 +27,25 @@ const items = [
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [items, setItems] = useState(initialItems);
 
   const filteredItems = items.filter((item) =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const addNewNote = () => {
+    const newNote = {
+      id: items.length + 1,
+      title: "",
+      content: "",
+      isNew: true,
+    };
+    setItems([...items, newNote]);
+  };
+
+  const handleInputChange = (id, field, value) => {
+    setItems(items.map(item => item.id === id ? { ...item, [field]: value } : item));
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -43,16 +60,37 @@ const Index = () => {
         <Search className="absolute right-2 top-2 h-5 w-5 text-gray-500" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div className="border p-4 rounded flex flex-col items-center justify-center text-center">
+        <div
+          className="border p-4 rounded flex flex-col items-center justify-center text-center cursor-pointer"
+          onClick={addNewNote}
+        >
           <PlusCircle className="h-10 w-10 text-gray-500 mb-2" />
           <h2 className="text-lg font-semibold">ADD A NEW NOTE</h2>
           <p className="text-gray-500">Start typing here...</p>
         </div>
         {filteredItems.map((item) => (
           <div key={item.id} className="border p-4 rounded">
-            <img src={item.image} alt={item.title} className="mb-2" />
-            <h2 className="text-lg font-semibold">{item.title}</h2>
-            {item.price && <p className="text-gray-500">{item.price}</p>}
+            {item.isNew ? (
+              <>
+                <Input
+                  placeholder="Title"
+                  value={item.title}
+                  onChange={(e) => handleInputChange(item.id, "title", e.target.value)}
+                  className="mb-2"
+                />
+                <Textarea
+                  placeholder="Content"
+                  value={item.content}
+                  onChange={(e) => handleInputChange(item.id, "content", e.target.value)}
+                />
+              </>
+            ) : (
+              <>
+                <img src={item.image} alt={item.title} className="mb-2" />
+                <h2 className="text-lg font-semibold">{item.title}</h2>
+                {item.price && <p className="text-gray-500">{item.price}</p>}
+              </>
+            )}
           </div>
         ))}
       </div>
